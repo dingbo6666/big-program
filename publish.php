@@ -1,5 +1,19 @@
 <?php
 error_reporting(E_ALL^E_NOTICE^E_DEPRECATED);
+include_once './lib/fun.php';
+session_start();
+if(!isset($_SESSION['user'])||empty($_SESSION['user']))
+{
+  msg(2, '请登录','login.php');
+}
+  $user = $_SESSION['user'];
+  if(!empty($_POST['name']))
+  {
+    $now = $_SERVER['REQUEST_TIME'];
+    $file = $_FILES['file'];
+    $img = imgUpload($file);
+    echo $img;die;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

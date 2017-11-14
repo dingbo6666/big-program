@@ -1,4 +1,71 @@
 <?php
+error_reporting(E_ALL^E_NOTICE^E_DEPRECATED);
+if(!empty($_POST['username']))
+{
+
+    include_once './lib/fun.php';
+
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
+    $repassword = trim($_POST['repassword']);
+
+    if(!$username)
+    {
+        msg(2, '用户名不能为空');
+    }
+
+    if(!$password)
+    {
+        msg(2, '密码不能为空');
+
+    }
+
+    if(!$repassword)
+    {
+        msg(2,'确认密码不能为空');
+    }
+
+    if($password !== $repassword)
+    {
+        msg('两次输入密码不一致,请重新输入');
+    }
+
+    $con = mysqlInit('127.0.0.1', 'root','','i_mall');
+
+    if(!$con)
+    {
+        echo mysql_errno();
+        exit;
+    }
+
+    $sql = "SELECT COUNT(  `id` ) as total FROM  `im_user` WHERE  `username` =  '{$username}'";
+    $obj = mysql_query($sql);
+
+    $result = mysql_fetch_assoc($obj);
+
+    if(isset($result['total']) && $result['total'] > 0)
+    {
+      echo '用户名已存在,请重新输入';exit;
+    }
+    $password = createPassword($password);
+    unset($obj, $result, $sql);
+    $sql = "INSERT `im_user`(`username`,`password`,`create_time`) values('{$username}','{$password}','{$_SERVER['REQUEST_TIME']}')";
+
+    $obj = mysql_query($sql);
+
+    if($obj)
+    {
+       $userId = mysql_insert_id();
+
+       echo sprintf('恭喜您注册成功,用户名是:%s,用户id:%s', $username, $userId);
+       exit;
+    }
+    else
+    {
+       echo mysql_error();
+       exit;
+    }
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -1,2 +1,9 @@
 <?php
-echo '登录成功';
+session_start();
+if(!isset($_SESSION['user'])||empty($_SESSION['user']))
+{
+  header('Location:login.php');
+  exit;
+}
+
+echo '商品中心';

@@ -7,54 +7,29 @@ if(!isset($_SESSION['user'])||empty($_SESSION['user']))
   msg(2, '请登录','login.php');
 }
   $user = $_SESSION['user'];
-  if(!empty($_POST['name']))
-  {
-    $con = mysqlInit('127.0.0.1', 'root', '', 'i_mall');
-    $name = mysql_real_escape_string(trim($_POST['name']));
-    $price = intval($_POST['price']);
-    $des = mysql_real_escape_string(trim($_POST['des']));
-    $content = mysql_real_escape_string(trim($_POST['content']));
-    $nameLength = mb_strlen($name, 'utf-8');
-    if($nameLength <= 0 || $nameLength > 30)
-    {
-        msg(2, '商品名应在1-30字符之内');
-    }
-    if($price <= 0 || $price > 999999999)
-    {
-        msg(2, '商品名称应小于999999999');
-    }
-    $desLength = mb_strlen($des, 'utf-8');
-    if($desLength <= 0 || $desLength > 100)
-    {
-        msg(2, '商品简介应在1-100字符之内');
-    }
-    if(empty($content))
-    {
-        msg(2, '商品详情不能为空');
-    }
-    $userId = $user['id'];
-    $now = $_SERVER['REQUEST_TIME'];
-    $pic = imgUpload($_FILES['file']);
+  $goodsId = isset($_GET['id']) && is_numeric($_GET['id']) ? intval($_GET['id']) : '';
 
-    //入库处理
-    $sql = "INSERT `im_goods`(`name`,`price`,`des`,`content`,`pic`,`user_id`,`create_time`,`update_time`,`view`)
-    values('{$name}','{$price}','{$des}','{$content}','{$pic}','{$userId}','{$now}','{$now}',0)";
-
-    if($obj = mysql_query($sql))
-    {
-        msg(1,'操作成功','index.php');
-    }
-    else
-    {
-      echo mysql_error();exit;
-    }
+  if(!$goodsId)
+{
+    msg(2,'参数非法','index.php');
 }
+
+$con = mysqlInit('127.0.0.1', 'root', '', 'i_mall');
+
+$sql = "SELECT * FROM `im_goods` WHERE `id` = {$goodsId}";
+$obj = mysql_query($sql);
+
+if(!$goods = mysql_fetch_assoc($obj))
+{
+    msg(2,'商品不存在','index.php');
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>发布商品</title>
+    <title>编辑商品</title>
     <link type="text/css" rel="stylesheet" href="./static/css/common.css">
     <link type="text/css" rel="stylesheet" href="./static/css/add.css">
 </head>
@@ -73,33 +48,35 @@ if(!isset($_SESSION['user'])||empty($_SESSION['user']))
 <div class="content">
     <div class="addwrap">
         <div class="addl fl">
-            <header>发布商品</header>
-            <form name="publish-form" id="publish-form" action="publish.php" method="post"
+            <header>编辑商品</header>
+            <form name="publish-form" id="publish-form" action="do_edit.php" method="post"
                   enctype="multipart/form-data">
                 <div class="additem">
                     <label id="for-name">商品名称</label><input type="text" name="name"
-                    id="name" placeholder="请输入商品名称">
+                    id="name" placeholder="请输入商品名称" value="<?php echo $goods['name']?>">
                 </div>
                 <div class="additem">
                     <label id="for-price">价值</label><input type="text" name="price"
-                    id="price" placeholder="请输入商品价值">
+                    id="price" placeholder="请输入商品价值" value="<?php echo $goods['price']?>" >
                 </div>
                 <div class="additem">
+                    <!-- 使用accept html5属性 声明仅接受png gif jpeg格式的文件                -->
                     <label id="for-file">商品</label><input type="file" accept="image/png,image/gif,image/jpeg"
                     id="file" name="file">
                 </div>
                 <div class="additem textwrap">
-                    <label class="ptop" id="for-des">商品简介</label><textarea id="des"
-                    name="des" placeholder="请输入商品简介"></textarea>
+                    <label class="ptop" id="for-des">商品简介</label>
+                    <textarea id="des" name="des" placeholder="请输入商品简介"><?php echo $goods['des']?></textarea>
                 </div>
                 <div class="additem textwrap">
                     <label class="ptop" id="for-content">商品详情</label>
                     <div style="margin-left: 120px" id="container">
-                        <textarea id="content" name="content"></textarea>
+                        <textarea id="content" name="content"><?php echo $goods['content']?></textarea>
                     </div>
 
                 </div>
                 <div style="margin-top: 20px">
+                    <input type="hidden" name="id" value="<?php echo $goods['id']?>">
                     <button type="submit">发布</button>
                 </div>
 
@@ -157,13 +134,6 @@ if(!isset($_SESSION['user'])||empty($_SESSION['user']))
                 layer.tips('请输入最多9位正整数', '#price', {time: 2000, tips: 2});
                 $('#price').focus();
                 return false;
-            }
-
-            if (file == '' || file.length <= 0) {
-                layer.tips('请选择图片', '#file', {time: 2000, tips: 2});
-                $('#file').focus();
-                return false;
-
             }
 
             if (des.length <= 0 || des.length >= 100) {

@@ -13,12 +13,12 @@ if(!empty($_POST['username']))
     $password = trim($_POST['password']);
     if(!$username)
     {
-        echo '用户名不能为空';exit;
+        msg(2, '用户名不能为空');
     }
 
     if(!$password)
     {
-        echo '密码不能为空';exit;
+        msg(2, '密码不能为空');
 
     }
 
@@ -45,12 +45,12 @@ if(!empty($_POST['username']))
         }
         else
         {
-            echo '密码不正确,请重新输入';exit;
+          msg(2, '密码不正确,请重新输入');
         }
     }
     else
     {
-        echo '用户不存在,请重新输入';exit;
+        msg(2, '用户不存在,请重新输入');
 
     }
 }

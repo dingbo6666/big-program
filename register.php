@@ -45,7 +45,7 @@ if(!empty($_POST['username']))
 
     if(isset($result['total']) && $result['total'] > 0)
     {
-      echo '用户名已存在,请重新输入';exit;
+      msg(2,'用户名已存在,请重新输入');
     }
     $password = createPassword($password);
     unset($obj, $result, $sql);
@@ -55,15 +55,11 @@ if(!empty($_POST['username']))
 
     if($obj)
     {
-       $userId = mysql_insert_id();
-
-       echo sprintf('恭喜您注册成功,用户名是:%s,用户id:%s', $username, $userId);
-       exit;
+       msg(1,'注册成功','login.php');
     }
     else
     {
-       echo mysql_error();
-       exit;
+       msg(2,mysql_errno());
     }
   }
 ?>

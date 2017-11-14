@@ -22,3 +22,13 @@ function createPassword($password)
 
     return md5(md5($password) . 'IMALL');
 }
+function msg($type, $msg = null, $url = null)
+{
+    $toUrl = "Location:msg.php?type={$type}";
+    //当msg为空时 url不写入
+    $toUrl .= $msg ? "&msg={$msg}" : '';
+    //当url为空 toUrl不写入
+    $toUrl .= $url ? "&url={$url}" : '';
+    header($toUrl);
+    exit;
+}

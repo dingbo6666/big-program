@@ -84,3 +84,91 @@ function checkLogin()
     return true;
 
 }
+function getUrl()
+{
+    $url = '';
+    $url .= $_SERVER['SERVER_PORT'] == 443 ? 'https://' : 'http://';
+    $url .= $_SERVER['HTTP_HOST'];
+    $url .= $_SERVER['REQUEST_URI'];
+    return $url;
+}
+function pageUrl($page, $url = '')
+{
+    $url = empty($url) ? getUrl() : $url;
+    //查询url中是否存在?
+    $pos = strpos($url, '?');
+    if($pos === false)
+    {
+        $url .= '?page=' . $page;
+    }
+    else
+    {
+        $queryString = substr($url, $pos + 1);
+        //解析querystring为数组
+        parse_str($queryString, $queryArr);
+        if(isset($queryArr['page']))
+        {
+            unset($queryArr['page']);
+        }
+        $queryArr['page'] = $page;
+        //将queryArr重新拼接成queryString
+        $queryStr = http_build_query($queryArr);
+        $url = substr($url, 0, $pos) . '?' . $queryStr;
+    }
+    return $url;
+}
+function pages($total, $currentPage, $pageSize, $show = 6)
+{
+    $pageStr = '';
+
+    //仅当总数大于每页显示条数 才进行分页处理
+    if($total > $pageSize)
+    {
+        $totalPage = ceil($total / $pageSize);//向上取整
+        $currentPage = $currentPage > $totalPage ? $totalPage : $currentPage;
+        $from = max(1, ($currentPage - intval($show / 2)));
+        $to = $from + $show - 1;
+        $pageStr .= '<div class="page-nav">';
+        $pageStr .= '<ul>';
+        //仅当 当前页大于1的时候 存在 首页和上一页按钮
+        if($currentPage > 1)
+        {
+            $pageStr .= "<li><a href='" . pageUrl(1) . "'>首页</a></li>";
+            $pageStr .= "<li><a href='" . pageUrl($currentPage - 1) . "'>上一页</a></li>";
+        }
+        //当结束页大于总页
+        if($to > $totalPage)
+        {
+            $to = $totalPage;
+            $from = max(1, $to - $show + 1);
+        }
+        if($from > 1)
+        {
+            $pageStr .= '<li>...</li>';
+        }
+        for($i = $from; $i <= $to; $i++)
+        {
+            if($i != $currentPage)
+            {
+                $pageStr .= "<li><a href='" . pageUrl($i) . "'>{$i}</a></li>";
+            }
+            else
+            {
+                $pageStr .= "<li><span class='curr-page'>{$i}</span></li>";
+            }
+        }
+        if($to < $totalPage)
+        {
+            $pageStr .= '<li>...</li>';
+
+        }
+        if($currentPage < $totalPage)
+        {
+            $pageStr .= "<li><a href='" . pageUrl($currentPage + 1) . "'>下一页</a></li>";
+            $pageStr .= "<li><a href='" . pageUrl($totalPage) . "'>尾页</a></li>";
+        }
+        $pageStr .= '</ul>';
+        $pageStr .= '</div>';
+    }
+    return $pageStr;
+}

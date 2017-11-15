@@ -22,7 +22,7 @@ if(!empty($_POST['username']))
 
     }
 
-    $con = mysqlInit('127.0.0.1', 'root', '', 'i_mall');
+    $con = mysqlInit('127.0.0.1', 'root', 'root', 'i_mall');
 
     if(!$con)
     {

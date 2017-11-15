@@ -9,7 +9,7 @@ if(!isset($_SESSION['user'])||empty($_SESSION['user']))
   $user = $_SESSION['user'];
   if(!empty($_POST['name']))
   {
-    $con = mysqlInit('127.0.0.1', 'root', '', 'i_mall');
+    $con = mysqlInit('127.0.0.1', 'root', 'root', 'i_mall');
     $name = mysql_real_escape_string(trim($_POST['name']));
     $price = intval($_POST['price']);
     $des = mysql_real_escape_string(trim($_POST['des']));

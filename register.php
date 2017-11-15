@@ -30,7 +30,7 @@ if(!empty($_POST['username']))
         msg('两次输入密码不一致,请重新输入');
     }
 
-    $con = mysqlInit('127.0.0.1', 'root','','i_mall');
+    $con = mysqlInit('127.0.0.1', 'root','root','i_mall');
 
     if(!$con)
     {

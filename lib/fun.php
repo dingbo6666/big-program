@@ -74,3 +74,13 @@ function imgUpload($file)
     }
     return $imgUrl;
 }
+function checkLogin()
+{
+    session_start();
+    if(!isset($_SESSION['user']) || empty($_SESSION['user']))
+    {
+        return false;
+    }
+    return true;
+
+}

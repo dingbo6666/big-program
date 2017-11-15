@@ -14,7 +14,7 @@ if(!isset($_SESSION['user'])||empty($_SESSION['user']))
     msg(2,'参数非法','index.php');
 }
 
-$con = mysqlInit('127.0.0.1', 'root', '', 'i_mall');
+$con = mysqlInit('127.0.0.1', 'root', 'root', 'i_mall');
 
 $sql = "SELECT * FROM `im_goods` WHERE `id` = {$goodsId}";
 $obj = mysql_query($sql);

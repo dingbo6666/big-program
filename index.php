@@ -7,7 +7,7 @@ if($login = checkLogin())
 }
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $page = max($page, 1);
-$pageSize = 1;
+$pageSize = 3;
 $offset = ($page - 1) * $pageSize;
 $con = mysqlInit('127.0.0.1', 'root', 'root', 'i_mall');
 $sql = "SELECT COUNT(`id`) as total from `im_goods`";
